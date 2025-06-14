@@ -22,8 +22,9 @@ def test_push_embedder_layout():
         )
     )
     keys = push_embedder.embed_file(source_url=document_url, processor=processors)
-    print(keys)
+    assert isinstance(keys, list)
     assert len(keys) > 0
+    assert all(isinstance(key, str) and key for key in keys)
 
 
 @pytest.mark.azure("This test requires Azure")
@@ -36,8 +37,9 @@ def test_push_embedder_read():
         )
     )
     keys = push_embedder.embed_file(source_url=document_url, processors=processors)
-    print(keys)
+    assert isinstance(keys, list)
     assert len(keys) > 0
+    assert all(isinstance(key, str) and key for key in keys)
 
 
 @pytest.mark.azure("This test requires Azure")
@@ -50,8 +52,9 @@ def test_push_embedder_web():
         )
     )
     keys = push_embedder.embed_file(source_url=url, processors=processors)
-    print(keys)
+    assert isinstance(keys, list)
     assert len(keys) > 0
+    assert all(isinstance(key, str) and key for key in keys)
 
 
 @pytest.mark.azure("This test requires Azure")
@@ -64,5 +67,6 @@ def test_push_embedder_docx():
         )
     )
     keys = push_embedder.embed_file(source_url=docx_url, processors=processors)
-    print(keys)
+    assert isinstance(keys, list)
     assert len(keys) > 0
+    assert all(isinstance(key, str) and key for key in keys)
