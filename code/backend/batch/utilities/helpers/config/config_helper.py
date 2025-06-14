@@ -150,20 +150,23 @@ class ConfigHelper:
                 "answering_system_prompt"
             ]
 
+        answering_prompt = config["prompts"].get("answering_prompt")
         prompt_modified = (
-            config["prompts"].get("answering_prompt")
-            != default_config["prompts"]["answering_prompt"]
+            answering_prompt is not None
+            and answering_prompt != default_config["prompts"]["answering_prompt"]
         )
 
         if config["prompts"].get("answering_user_prompt") is None:
             if prompt_modified:
-                config["prompts"]["answering_user_prompt"] = config["prompts"].get(
-                    "answering_prompt"
-                )
+                config["prompts"]["answering_user_prompt"] = answering_prompt
             else:
                 config["prompts"]["answering_user_prompt"] = default_config["prompts"][
                     "answering_user_prompt"
                 ]
+
+        # Remove legacy property if present
+        if "answering_prompt" in config["prompts"]:
+            del config["prompts"]["answering_prompt"]
 
         if config["prompts"].get("use_on_your_data_format") is None:
             config["prompts"]["use_on_your_data_format"] = not prompt_modified
