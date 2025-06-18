@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 from azure.cosmos import exceptions
 from backend.batch.utilities.chat_history.cosmosdb import CosmosConversationClient
 
@@ -179,3 +179,37 @@ async def test_update_message_feedback_success(cosmos_client):
 
     assert response["feedback"] == "positive"
     client.container_client.upsert_item.assert_called_once()
+
+
+class _AsyncIterator:
+    def __init__(self, items):
+        self.items = items
+
+    def __aiter__(self):
+        self._iter = iter(self.items)
+        return self
+
+    async def __anext__(self):
+        try:
+            return next(self._iter)
+        except StopIteration:
+            raise StopAsyncIteration
+
+
+@pytest.mark.asyncio
+async def test_get_messages_ordered_by_created_at(cosmos_client):
+    client = cosmos_client
+
+    messages = [
+        {"id": "1", "createdAt": "2024-01-01T00:00:00Z"},
+        {"id": "2", "createdAt": "2024-01-02T00:00:00Z"},
+    ]
+
+    client.container_client.query_items = MagicMock(return_value=_AsyncIterator(messages))
+
+    result = await client.get_messages("user", "conv")
+
+    assert result == messages
+    client.container_client.query_items.assert_called_once()
+    called_kwargs = client.container_client.query_items.call_args.kwargs
+    assert "ORDER BY c.createdAt ASC" in called_kwargs["query"]
