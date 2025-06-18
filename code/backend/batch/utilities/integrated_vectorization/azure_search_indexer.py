@@ -34,18 +34,16 @@ class AzureSearchIndexer:
                     "imageAction": "generateNormalizedImages",
                 }
             },
+            # Only map fields that exist in the target index. The OCR outputs
+            # ("text" and "layoutText") are merged and projected to the index
+            # through the skillset, so direct field mappings are not required
+            # here and would cause errors if the index does not define those
+            # fields. Currently the index defines a "source" field for which we
+            # keep a mapping from the blob path.
             field_mappings=[
                 FieldMapping(
                     source_field_name="metadata_storage_path",
                     target_field_name="source",
-                ),
-                FieldMapping(
-                    source_field_name="/document/normalized_images/*/text",
-                    target_field_name="text",
-                ),
-                FieldMapping(
-                    source_field_name="/document/normalized_images/*/layoutText",
-                    target_field_name="layoutText",
                 ),
             ],
         )
