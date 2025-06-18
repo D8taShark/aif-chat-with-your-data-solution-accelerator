@@ -29,7 +29,7 @@ We want to add Integrated vectorization (Pull based approach) and give the flexi
 
 ### Using Pull approach throughout (Resource creation via bicep or code)
 
-Ask the user at the time of deployment on which approach to take. If the user selects Integrated Vectorization(IV), the resources for IV are created during the infra deployment through [bicep](https://learn.microsoft.com/en-us/azure/search/search-get-started-bicep?tabs=CLI) using REST APIs wrapped in script or resources can be created via code when the document gets uploaded to the blob. Once the document is uploaded, the indexer is executed asyncronously which indexes the documents.
+Ask the user at the time of deployment on which approach to take. If the user selects Integrated Vectorization(IV), the resources for IV are created during the infra deployment through [bicep](https://learn.microsoft.com/en-us/azure/search/search-get-started-bicep?tabs=CLI) using REST APIs wrapped in script or resources can be created via code when the document gets uploaded to the blob. Once the document is uploaded, the indexer is executed asynchronously which indexes the documents.
 In both the options of the resource creation, we still need to have an azure function to index the documents uploaded immediately.
 For URL embedding, the URL content is scraped of any html & css related content and the text will be uploaded as a byte stream to the blob storage for further processing. In case the URL content is very large we can handle it by streaming the content in chunks and avoid loading the entire web page content into memory all at once.
 
